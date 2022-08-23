@@ -118,9 +118,8 @@ public class StoreS3 implements Store {
 
     if (containsKey(key)) {
       previousValue = get(key);
+      s3.deleteObject(bucket, key);
     }
-
-    s3.deleteObject(bucket, key);
 
     return previousValue;
   }
