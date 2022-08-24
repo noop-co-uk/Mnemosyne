@@ -8,9 +8,22 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import uk.co.noop.guardian.Guardian;
 import uk.co.noop.s3rvant.store.Store;
+import uk.co.noop.s3rvant.store.StoreLocal;
 import uk.co.noop.s3rvant.store.StoreS3;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class S3rvant {
+
+  private static final Map<String, Store> STORE_LOCALS = new HashMap<>();
+
+  public static Store getStore(final String name) {
+
+    Guardian.guard("name", name).againstBlankStrings();
+
+    return STORE_LOCALS.computeIfAbsent(name, __ -> new StoreLocal());
+  }
 
   public static Store getStore(
       final String awsAccessKey,

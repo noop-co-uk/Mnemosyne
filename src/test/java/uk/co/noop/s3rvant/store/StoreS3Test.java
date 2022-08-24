@@ -203,6 +203,7 @@ public class StoreS3Test {
 
   @Test
   public void containsKey_string_emptyKey_shouldThrowEmptyTarget() {
+
     Assertions.assertThrows(
         GuardianEmptyTargetException.class,
         () -> new StoreS3(s3, TEST_BUCKET).containsKey(""));
@@ -212,6 +213,7 @@ public class StoreS3Test {
 
   @Test
   public void containsKey_string_blankKey_shouldThrowBlankTargetString() {
+
     Assertions.assertThrows(
         GuardianBlankTargetStringException.class,
         () -> new StoreS3(s3, TEST_BUCKET).containsKey(" "));
@@ -306,6 +308,7 @@ public class StoreS3Test {
 
   @Test
   public void containsValue_string_blankValue_shouldThrowBlankTargetString() {
+
     Assertions.assertThrows(
         GuardianBlankTargetStringException.class,
         () -> new StoreS3(s3, TEST_BUCKET).containsValue(" "));
