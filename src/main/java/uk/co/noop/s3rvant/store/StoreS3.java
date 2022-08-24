@@ -137,7 +137,7 @@ public class StoreS3 implements Store {
   }
 
   @Override
-  public void putAll(Map<? extends String, ? extends String> map) {
+  public void putAll(final Map<? extends String, ? extends String> map) {
 
     Guardian.guard("map", map).againstNullObjects();
 

@@ -15,12 +15,21 @@ import uk.co.noop.guardian.exception.GuardianEmptyTargetException;
 import uk.co.noop.guardian.exception.GuardianInvalidTargetException;
 import uk.co.noop.guardian.exception.GuardianNullTargetException;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class StoreS3Test {
@@ -269,8 +278,7 @@ public class StoreS3Test {
 
     final Object key = "Test Key 1";
 
-    Assertions.assertTrue(
-        new StoreS3(s3, TEST_BUCKET).containsKey(key));
+    Assertions.assertTrue(new StoreS3(s3, TEST_BUCKET).containsKey(key));
 
     verify(s3).doesBucketExistV2(eq(TEST_BUCKET));
     verify(s3).doesObjectExist(eq(TEST_BUCKET), eq("Test Key 1"));
@@ -369,8 +377,7 @@ public class StoreS3Test {
 
     final Object value = "Test Value 1";
 
-    Assertions.assertTrue(
-        new StoreS3(s3, TEST_BUCKET).containsValue(value));
+    Assertions.assertTrue(new StoreS3(s3, TEST_BUCKET).containsValue(value));
 
     verify(s3).doesBucketExistV2(eq(TEST_BUCKET));
     verify(s3).listObjects(eq(TEST_BUCKET));
@@ -590,8 +597,7 @@ public class StoreS3Test {
   @Test
   public void remove_string_noPreviousValue_shouldReturnNull() {
 
-    Assertions.assertNull(
-        new StoreS3(s3, TEST_BUCKET).remove("Test Key 1"));
+    Assertions.assertNull(new StoreS3(s3, TEST_BUCKET).remove("Test Key 1"));
 
     verify(s3).doesBucketExistV2(eq(TEST_BUCKET));
     verify(s3).doesObjectExist(eq(TEST_BUCKET), eq("Test Key 1"));
@@ -657,6 +663,229 @@ public class StoreS3Test {
     verify(s3).doesObjectExist(eq(TEST_BUCKET), eq("Test Key 1"));
     verify(s3).getObjectAsString(eq(TEST_BUCKET), eq("Test Key 1"));
     verify(s3).deleteObject(eq(TEST_BUCKET), eq("Test Key 1"));
+  }
+
+  @Test
+  public void putAll_nullMap_shouldThrowNullTarget() {
+
+    Assertions.assertThrows(
+        GuardianNullTargetException.class,
+        () -> new StoreS3(s3, TEST_BUCKET).putAll(null));
+
+    verify(s3).doesBucketExistV2(eq(TEST_BUCKET));
+  }
+
+  @Test
+  public void putAll_happyPath_shouldPutAll() {
+
+    final Map<String, String> map = new HashMap<>();
+    map.put("Test Key 1", "Test Value 1");
+    map.put("Test Key 2", "Test Value 2");
+
+    final Store store = new StoreS3(s3, TEST_BUCKET);
+    store.putAll(map);
+
+    Assertions.assertEquals("Test Value 1", store.get("Test Key 1"));
+    Assertions.assertEquals("Test Value 2", store.get("Test Key 2"));
+
+    verify(s3).doesBucketExistV2(eq(TEST_BUCKET));
+    verify(s3, times(map.size())).doesObjectExist(eq(TEST_BUCKET), anyString());
+
+    verify(s3, times(map.size()))
+        .putObject(eq(TEST_BUCKET), anyString(), anyString());
+
+    verify(s3, times(map.size()))
+        .getObjectAsString(eq(TEST_BUCKET), anyString());
+  }
+
+  @Test
+  public void clear_shouldRemoveAll() {
+
+    map.put("Test Key 1", "Test Value 1");
+    map.put("Test Key 2", "Test Value 2");
+
+    final int mapSize = map.size();
+
+    mock_objectSummaries_happyPath();
+
+    new StoreS3(s3, TEST_BUCKET).clear();
+
+    Assertions.assertTrue(map.isEmpty());
+
+    verify(s3).doesBucketExistV2(eq(TEST_BUCKET));
+    verify(s3).listObjects(eq(TEST_BUCKET));
+    verify(objectListing).getObjectSummaries();
+    verify(s3, times(mapSize)).doesObjectExist(eq(TEST_BUCKET), anyString());
+
+    verify(s3, times(mapSize))
+        .getObjectAsString(eq(TEST_BUCKET), anyString());
+
+    verify(s3, times(mapSize)).deleteObject(eq(TEST_BUCKET), anyString());
+  }
+
+  @Test
+  public void keySet_shouldReturnAllKeys() {
+
+    map.put("Test Key 1", "Test Value 1");
+    map.put("Test Key 2", "Test Value 2");
+
+    mock_objectSummaries_happyPath();
+
+    Assertions.assertTrue(
+        new StoreS3(s3, TEST_BUCKET).keySet().containsAll(map.keySet()));
+
+    verify(s3).doesBucketExistV2(eq(TEST_BUCKET));
+    verify(s3).listObjects(eq(TEST_BUCKET));
+    verify(objectListing).getObjectSummaries();
+  }
+
+  @Test
+  public void values_shouldReturnAllValues() {
+
+    map.put("Test Key 1", "Test Value 1");
+    map.put("Test Key 2", "Test Value 2");
+
+    mock_objectSummaries_happyPath();
+
+    Assertions.assertTrue(
+        new StoreS3(s3, TEST_BUCKET).values().containsAll(map.values()));
+
+    verify(s3).doesBucketExistV2(eq(TEST_BUCKET));
+    verify(s3).listObjects(eq(TEST_BUCKET));
+    verify(objectListing).getObjectSummaries();
+
+    verify(s3, times(map.size()))
+        .getObjectAsString(eq(TEST_BUCKET), anyString());
+  }
+
+  @Test
+  public void entrySet_shouldReturnAllEntries() {
+
+    map.put("Test Key 1", "Test Value 1");
+    map.put("Test Key 2", "Test Value 2");
+
+    mock_objectSummaries_happyPath();
+
+    Assertions.assertEquals(
+        map.size(),
+        new StoreS3(s3, TEST_BUCKET).entrySet().size());
+
+    verify(s3).doesBucketExistV2(eq(TEST_BUCKET));
+    verify(s3).listObjects(eq(TEST_BUCKET));
+    verify(objectListing).getObjectSummaries();
+    verify(s3, never()).getObjectAsString(eq(TEST_BUCKET), anyString());
+  }
+
+  @Test
+  public void entry_constructor_nullKey_shouldThrowNullTarget() {
+
+    when(objectListing.getObjectSummaries())
+        .thenReturn(Collections.singletonList(mock(S3ObjectSummary.class)));
+
+    Assertions.assertThrows(
+        GuardianNullTargetException.class,
+        () -> new StoreS3(s3, TEST_BUCKET).entrySet());
+
+    verify(s3).doesBucketExistV2(eq(TEST_BUCKET));
+    verify(s3).listObjects(eq(TEST_BUCKET));
+    verify(objectListing).getObjectSummaries();
+    verify(s3, never()).getObjectAsString(eq(TEST_BUCKET), anyString());
+  }
+
+  @Test
+  public void entry_constructor_emptyKey_shouldThrowEmptyTarget() {
+
+    final S3ObjectSummary objectSummary = mock(S3ObjectSummary.class);
+
+    when(objectListing.getObjectSummaries())
+        .thenReturn(Collections.singletonList(objectSummary));
+
+    when(objectSummary.getKey()).thenReturn("");
+
+    Assertions.assertThrows(
+        GuardianEmptyTargetException.class,
+        () -> new StoreS3(s3, TEST_BUCKET).entrySet());
+
+    verify(s3).doesBucketExistV2(eq(TEST_BUCKET));
+    verify(s3).listObjects(eq(TEST_BUCKET));
+    verify(objectListing).getObjectSummaries();
+    verify(s3, never()).getObjectAsString(eq(TEST_BUCKET), anyString());
+  }
+
+  @Test
+  public void entry_constructor_blankKey_shouldThrowBlankTargetString() {
+
+    final S3ObjectSummary objectSummary = mock(S3ObjectSummary.class);
+
+    when(objectListing.getObjectSummaries())
+        .thenReturn(Collections.singletonList(objectSummary));
+
+    when(objectSummary.getKey()).thenReturn(" ");
+
+    Assertions.assertThrows(
+        GuardianBlankTargetStringException.class,
+        () -> new StoreS3(s3, TEST_BUCKET).entrySet());
+
+    verify(s3).doesBucketExistV2(eq(TEST_BUCKET));
+    verify(s3).listObjects(eq(TEST_BUCKET));
+    verify(objectListing).getObjectSummaries();
+    verify(s3, never()).getObjectAsString(eq(TEST_BUCKET), anyString());
+  }
+
+  @Test
+  public void entry_constructor_getKey_happyPath() {
+
+    map.put("Test Key 1", "Test Value 1");
+
+    mock_objectSummaries_happyPath();
+
+    Assertions.assertEquals(
+        "Test Key 1",
+        new StoreS3(s3, TEST_BUCKET).entrySet().iterator().next().getKey());
+
+    verify(s3).doesBucketExistV2(eq(TEST_BUCKET));
+    verify(s3).listObjects(eq(TEST_BUCKET));
+    verify(objectListing).getObjectSummaries();
+    verify(s3, never()).getObjectAsString(eq(TEST_BUCKET), anyString());
+  }
+
+  @Test
+  public void entry_getValue_shouldLazyLoadValue() {
+
+    map.put("Test Key 1", "Test Value 1");
+
+    mock_objectSummaries_happyPath();
+
+    Assertions.assertEquals(
+        "Test Value 1",
+        new StoreS3(s3, TEST_BUCKET).entrySet().iterator().next().getValue());
+
+    verify(s3).doesBucketExistV2(eq(TEST_BUCKET));
+    verify(s3).listObjects(eq(TEST_BUCKET));
+    verify(objectListing).getObjectSummaries();
+    verify(s3).getObjectAsString(eq(TEST_BUCKET), eq("Test Key 1"));
+  }
+
+  @Test
+  public void entry_setValue_happyPath_shouldReturnPreviousValue() {
+
+    map.put("Test Key 1", "Test Value 1");
+
+    mock_objectSummaries_happyPath();
+
+    Assertions.assertEquals(
+        "Test Value 1",
+        new StoreS3(s3, TEST_BUCKET)
+            .entrySet().iterator().next().setValue("Test Value 1B"));
+
+    verify(s3).doesBucketExistV2(eq(TEST_BUCKET));
+    verify(s3).listObjects(eq(TEST_BUCKET));
+    verify(objectListing).getObjectSummaries();
+    verify(s3).doesObjectExist(eq(TEST_BUCKET), eq("Test Key 1"));
+    verify(s3).getObjectAsString(eq(TEST_BUCKET), eq("Test Key 1"));
+
+    verify(s3)
+        .putObject(eq(TEST_BUCKET), eq("Test Key 1"), eq("Test Value 1B"));
   }
 
 }
