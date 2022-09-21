@@ -1,143 +1,191 @@
-# S3rvant
-A library for storing and retrieving key/value pairs; e.g.
+# Mnemosyne
+Goddess of memory and remembrance. A library for storing and retrieving
+key/value `String` pairs; e.g.
 
-`S3rvant.getStore("data-cache").put(key, value);`
+`Mnemosyne.getMneme("data-cache").put(key, value);`
 
-## Stores
-S3rvant delegates the storing and retrieving of key/value pairs to `Store`
-instances.
+## Mneme Instances
+Mnemosyne delegates the storing and retrieving of key/value `String` pairs to
+`Mneme` instances.
 
 ---
 
-### StoreS3
-A `Store` for storing and retrieving key/value pairs in an S3 bucket.
+### S3Mneme
+A `Mneme` for storing and retrieving key/value `String` pairs in an S3 bucket.
 
 ---
 
 #### Size (`size()`)
-Returns the number of key/value pairs stored.
+Returns the number of key/value `String` pairs stored.
 
 For example;
 
 ```java
-final Store store = S3rvant.getStore(ACCESS_KEY, SECRET_KEY, REGION, BUCKET);
-store.put("data-cache/file1", "Lorem ipsum...");
-store.put("data-cache/file2", "Dolor sit amet...");
-store.size(); // will return 2
+final Mneme mneme =
+  Mnemosyne.getMneme(
+    AWS_ACCESS_KEY,
+    AWS_SECRET_KEY,
+    AWS_REGION,
+    S3_BUCKET_NAME);
+mneme.put("dir/file123", "Lorem ipsum...");
+mneme.put("dir/file456", "Dolor sit amet...");
+mneme.size(); // will return 2
 ```
 
 ---
 
 #### Is Empty (`isEmpty()`)
-Returns `true` if no key/value pairs are stored, `false` otherwise.
+Returns `true` if no key/value `String` pairs are stored, `false` otherwise.
 
 For example;
 
 ```java
-final Store store = S3rvant.getStore(ACCESS_KEY, SECRET_KEY, REGION, BUCKET);
-store.isEmpty(); // will return true
-store.put("data-cache/file1", "Lorem ipsum...");
-store.isEmpty(); // will return false
+final Mneme mneme =
+  Mnemosyne.getMneme(
+    AWS_ACCESS_KEY,
+    AWS_SECRET_KEY,
+    AWS_REGION,
+    S3_BUCKET_NAME);
+mneme.isEmpty(); // will return true
+mneme.put("dir/file123", "Lorem ipsum...");
+mneme.isEmpty(); // will return false
 ```
 
 ---
 
 #### Contains Key (`containsKey(String key)`)
-Returns `true` if a value is stored for the specified key, `false` otherwise.
+Returns `true` if a value is stored for the specified **key**, `false`
+otherwise.
 
 For example;
 
 ```java
-final Store store = S3rvant.getStore(ACCESS_KEY, SECRET_KEY, REGION, BUCKET);
-store.containsKey("data-cache/file1"); // will return false
-store.put("data-cache/file1", "Lorem ipsum...");
-store.containsKey("data-cache/file1"); // will return true
+final Mneme mneme =
+  Mnemosyne.getMneme(
+    AWS_ACCESS_KEY,
+    AWS_SECRET_KEY,
+    AWS_REGION,
+    S3_BUCKET_NAME);
+mneme.containsKey("dir/file123"); // will return false
+mneme.put("dir/file123", "Lorem ipsum...");
+mneme.containsKey("dir/file123"); // will return true
 ```
 
 ---
 
 #### Contains Value (`containsValue(String value)`)
-Returns `true` if the specified value is stored for any key, `false` otherwise.
+Returns `true` if the specified **value** is stored for one or more keys,
+`false` otherwise.
 
 For example;
 
 ```java
-final Store store = S3rvant.getStore(ACCESS_KEY, SECRET_KEY, REGION, BUCKET);
-store.containsValue("Lorem ipsum..."); // will return false
-store.put("data-cache/file1", "Lorem ipsum...");
-store.containsValue("Lorem ipsum..."); // will return true
+final Mneme mneme =
+  Mnemosyne.getMneme(
+    AWS_ACCESS_KEY,
+    AWS_SECRET_KEY,
+    AWS_REGION,
+    S3_BUCKET_NAME);
+mneme.containsValue("Lorem ipsum..."); // will return false
+mneme.put("dir/file123", "Lorem ipsum...");
+mneme.containsValue("Lorem ipsum..."); // will return true
 ```
 
 ---
 
 #### Get (`get(String key)`)
-Returns the value stored for the specified key.
+Returns the value stored for the specified **key**.
 
 For example;
 
 ```java
-final Store store = S3rvant.getStore(ACCESS_KEY, SECRET_KEY, REGION, BUCKET);
-store.put("data-cache/file1", "Lorem ipsum...");
-store.get("data-cache/file1"); // will return "Lorem Ipsum..."
+final Mneme mneme =
+  Mnemosyne.getMneme(
+    AWS_ACCESS_KEY,
+    AWS_SECRET_KEY,
+    AWS_REGION,
+    S3_BUCKET_NAME);
+mneme.put("dir/file123", "Lorem ipsum...");
+mneme.get("dir/file123"); // will return "Lorem Ipsum..."
 ```
 
 ---
 
 #### Put (`put(String key, String value)`)
-Stores the specified value for a key.
+Stores the specified **value** for the specified **key**.
 
 For example;
 
 ```java
-final Store store = S3rvant.getStore(ACCESS_KEY, SECRET_KEY, REGION, BUCKET);
-store.put("data-cache/file1", "Lorem ipsum...");
-store.containsKey("data-cache/file1"); // will return true
+final Mneme mneme =
+  Mnemosyne.getMneme(
+    AWS_ACCESS_KEY,
+    AWS_SECRET_KEY,
+    AWS_REGION,
+    S3_BUCKET_NAME);
+mneme.put("dir/file123", "Lorem ipsum...");
+mneme.get("dir/file123"); // will return "Lorem Ipsum..."
 ```
 
 ---
 
 #### Remove (`remove(String key)`)
-Removes the stored value for the specified key.
+Removes the stored value for the specified **key**.
 
 For example;
 
 ```java
-final Store store = S3rvant.getStore(ACCESS_KEY, SECRET_KEY, REGION, BUCKET);
-store.put("data-cache/file1", "Lorem ipsum...");
-store.remove("data-cache/file1");
-store.containsKey("data-cache/file1"); // will return false
+final Mneme mneme =
+  Mnemosyne.getMneme(
+    AWS_ACCESS_KEY,
+    AWS_SECRET_KEY,
+    AWS_REGION,
+    S3_BUCKET_NAME);
+mneme.put("dir/file123", "Lorem ipsum...");
+mneme.remove("dir/file123");
+mneme.containsKey("dir/file123"); // will return false
 ```
 
 ---
 
 #### Put All (`putAll(Map map)`)
-Stores the specified key/value pairs.
+Stores the specified key/value `String` pairs.
 
 For example;
 
 ```java
 final Map<String, String> map = new HashMap<>();
-map.put("data-cache/file1", "Lorem ipsum...");
-map.put("data-cache/file2", "Dolor sit amet...");
+map.put("dir/file123", "Lorem ipsum...");
+map.put("dir/file456", "Dolor sit amet...");
 
-final Store store = S3rvant.getStore(ACCESS_KEY, SECRET_KEY, REGION, BUCKET);
-store.putAll(map);
-store.size(); // will return 2
+final Mneme mneme =
+  Mnemosyne.getMneme(
+    AWS_ACCESS_KEY,
+    AWS_SECRET_KEY,
+    AWS_REGION,
+    S3_BUCKET_NAME);
+mneme.putAll(map);
+mneme.size(); // will return 2
 ```
 
 ---
 
 #### Clear (`clear()`)
-Removes all the stored key/value pairs.
+Removes all the stored key/value `String` pairs.
 
 For example;
 
 ```java
-final Store store = S3rvant.getStore(ACCESS_KEY, SECRET_KEY, REGION, BUCKET);
-store.put("data-cache/file1", "Lorem ipsum...");
-store.put("data-cache/file2", "Dolor sit amet...");
-store.clear();
-store.isEmpty(); // will return true
+final Mneme mneme =
+  Mnemosyne.getMneme(
+    AWS_ACCESS_KEY,
+    AWS_SECRET_KEY,
+    AWS_REGION,
+    S3_BUCKET_NAME);
+mneme.put("dir/file123", "Lorem ipsum...");
+mneme.put("dir/file456", "Dolor sit amet...");
+mneme.clear();
+mneme.isEmpty(); // will return true
 ```
 
 ---
@@ -148,10 +196,15 @@ Returns all the keys with a stored value.
 For example;
 
 ```java
-final Store store = S3rvant.getStore(ACCESS_KEY, SECRET_KEY, REGION, BUCKET);
-store.put("data-cache/file1", "Lorem ipsum...");
-store.put("data-cache/file2", "Dolor sit amet...");
-store.keySet(); // will return a Set of "data-cache/file1" and "data-cache/file2"
+final Mneme mneme =
+  Mnemosyne.getMneme(
+    AWS_ACCESS_KEY,
+    AWS_SECRET_KEY,
+    AWS_REGION,
+    S3_BUCKET_NAME);
+mneme.put("dir/file123", "Lorem ipsum...");
+mneme.put("dir/file456", "Dolor sit amet...");
+mneme.keySet(); // will return a Set of "dir/file123" and "dir/file456"
 ```
 
 ---
@@ -162,198 +215,46 @@ Returns all the stored values.
 For example;
 
 ```java
-final Store store = S3rvant.getStore(ACCESS_KEY, SECRET_KEY, REGION, BUCKET);
-store.put("data-cache/file1", "Lorem ipsum...");
-store.put("data-cache/file2", "Dolor sit amet...");
-store.values(); // will return a collection of "Lorem ipsum..." and "Dolor sit amet"
+final Mneme mneme =
+  Mnemosyne.getMneme(
+    AWS_ACCESS_KEY,
+    AWS_SECRET_KEY,
+    AWS_REGION,
+    S3_BUCKET_NAME);
+mneme.put("dir/file123", "Lorem ipsum...");
+mneme.put("dir/file456", "Dolor sit amet...");
+mneme.values(); // will return a Collection of "Lorem ipsum..." and "Dolor sit amet"
 ```
 
 ---
 
 #### Entry Set (`entrySet()`)
-Returns all the stored key/value pairs as `Map.Entry` instances.
+Returns all the stored key/value `String` pairs as `Map.Entry` instances.
 
 For example;
 
 ```java
-final Store store = S3rvant.getStore(ACCESS_KEY, SECRET_KEY, REGION, BUCKET);
-store.put("data-cache/file1", "Lorem ipsum...");
-store.put("data-cache/file2", "Dolor sit amet...");
-store.entrySet(); // will return a Set of Map.Entry instances
+final Mneme mneme =
+  Mnemosyne.getMneme(
+    AWS_ACCESS_KEY,
+    AWS_SECRET_KEY,
+    AWS_REGION,
+    S3_BUCKET_NAME);
+mneme.put("dir/file123", "Lorem ipsum...");
+mneme.put("dir/file456", "Dolor sit amet...");
+mneme.entrySet(); // will return a Set of Map.Entry instances
 ```
 
 ---
 
-### StoreLocal
-A `Store` for storing and retrieving key/value pairs locally for dev/testing
-purposes.
-
----
-
-#### Size (`size()`)
-Returns the number of key/value pairs stored.
+### LocalMneme
+A `Mneme` for storing and retrieving key/value `String` pairs locally for
+dev/testing purposes.
 
 For example;
 
 ```java
-final Store store = S3rvant.getStore("data-cache");
-store.put("file1", "Lorem ipsum...");
-store.put("file2", "Dolor sit amet...");
-store.size(); // will return 2
-```
-
----
-
-#### Is Empty (`isEmpty()`)
-Returns `true` if no key/value pairs are stored, `false` otherwise.
-
-For example;
-
-```java
-final Store store = S3rvant.getStore("data-cache");
-store.isEmpty(); // will return true
-store.put("file1", "Lorem ipsum...");
-store.isEmpty(); // will return false
-```
-
----
-
-#### Contains Key (`containsKey(String key)`)
-Returns `true` if a value is stored for the specified key, `false` otherwise.
-
-For example;
-
-```java
-final Store store = S3rvant.getStore("data-cache");
-store.containsKey("file1"); // will return false
-store.put("file1", "Lorem ipsum...");
-store.containsKey("file1"); // will return true
-```
-
----
-
-#### Contains Value (`containsValue(String value)`)
-Returns `true` if the specified value is stored for any key, `false` otherwise.
-
-For example;
-
-```java
-final Store store = S3rvant.getStore("data-cache");
-store.containsValue("Lorem ipsum..."); // will return false
-store.put("file1", "Lorem ipsum...");
-store.containsValue("Lorem ipsum..."); // will return true
-```
-
----
-
-#### Get (`get(String key)`)
-Returns the value stored for the specified key.
-
-For example;
-
-```java
-final Store store = S3rvant.getStore("data-cache");
-store.put("file1", "Lorem ipsum...");
-store.get("file1"); // will return "Lorem Ipsum..."
-```
-
----
-
-#### Put (`put(String key, String value)`)
-Stores the specified value for a key.
-
-For example;
-
-```java
-final Store store = S3rvant.getStore("data-cache");
-store.put("file1", "Lorem ipsum...");
-store.containsKey("file1"); // will return true
-```
-
----
-
-#### Remove (`remove(String key)`)
-Removes the stored value for the specified key.
-
-For example;
-
-```java
-final Store store = S3rvant.getStore("data-cache");
-store.put("file1", "Lorem ipsum...");
-store.remove("file1");
-store.containsKey("file1"); // will return false
-```
-
----
-
-#### Put All (`putAll(Map map)`)
-Stores the specified key/value pairs.
-
-For example;
-
-```java
-final Map<String, String> map = new HashMap<>();
-map.put("file1", "Lorem ipsum...");
-map.put("file2", "Dolor sit amet...");
-
-final Store store = S3rvant.getStore("data-cache");
-store.putAll(map);
-store.size(); // will return 2
-```
-
----
-
-#### Clear (`clear()`)
-Removes all the stored key/value pairs.
-
-For example;
-
-```java
-final Store store = S3rvant.getStore("data-cache");
-store.put("file1", "Lorem ipsum...");
-store.put("file2", "Dolor sit amet...");
-store.clear();
-store.isEmpty(); // will return true
-```
-
----
-
-#### Key Set (`keySet()`)
-Returns all the keys with a stored value.
-
-For example;
-
-```java
-final Store store = S3rvant.getStore("data-cache");
-store.put("file1", "Lorem ipsum...");
-store.put("file2", "Dolor sit amet...");
-store.keySet(); // will return a Set of "file1" and "file2"
-```
-
----
-
-#### Values (`values()`)
-Returns all the stored values.
-
-For example;
-
-```java
-final Store store = S3rvant.getStore("data-cache");
-store.put("file1", "Lorem ipsum...");
-store.put("file2", "Dolor sit amet...");
-store.values(); // will return a collection of "Lorem ipsum..." and "Dolor sit amet"
-```
-
----
-
-#### Entry Set (`entrySet()`)
-Returns all the stored key/value pairs as `Map.Entry` instances.
-
-For example;
-
-```java
-final Store store = S3rvant.getStore("data-cache");
-store.put("file1", "Lorem ipsum...");
-store.put("file2", "Dolor sit amet...");
-store.entrySet(); // will return a Set of Map.Entry instances
+final Mneme mneme = Mnemosyne.getMneme("data-cache");
+mneme.put("id123", "Lorem ipsum...");
+mneme.get("id123"); // will return "Lorem ipsum..."
 ```
