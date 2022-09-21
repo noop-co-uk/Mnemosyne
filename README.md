@@ -1,6 +1,8 @@
 # Mnemosyne
 Goddess of memory and remembrance. A library for storing and retrieving
-key/value `String` pairs; e.g.
+key/value `String` pairs.
+
+For example:
 
 `Mnemosyne.getMneme("data-cache").put(key, value);`
 
