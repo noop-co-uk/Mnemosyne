@@ -7,10 +7,23 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toSet;
+import static uk.co.noop.themis.Themis.validate;
+
+/**
+ * <p>{@link uk.co.noop.mnemosyne.Mnemosyne Mnemosyne} delegates the storing and
+ * retrieving of key/value <code>String</code> pairs to {@link Mneme}
+ * instances.</p>
+ *
+ * @see Mneme
+ * @see uk.co.noop.mnemosyne.Mnemosyne
+ */
 public abstract class AbstractMneme implements Mneme {
 
+  /**
+   * <p>Creates a new instance of <code>AbstractMneme</code>.</p>
+   */
   protected AbstractMneme() {
     super();
   }
@@ -73,10 +86,10 @@ public abstract class AbstractMneme implements Mneme {
   @Override
   public boolean containsKey(final Object key) {
 
-    Themis.validate("key", key).againstNullObjects();
+    validate("key", key).againstNullObjects();
 
-    if (key instanceof String) {
-      return containsKey((String) key);
+    if (key instanceof String keyString) {
+      return containsKey(keyString);
     }
 
     throw new ClassCastException();
@@ -116,10 +129,10 @@ public abstract class AbstractMneme implements Mneme {
   @Override
   public boolean containsValue(final Object value) {
 
-    Themis.validate("value", value).againstNullObjects();
+    validate("value", value).againstNullObjects();
 
-    if (value instanceof String) {
-      return containsValue((String) value);
+    if (value instanceof String valueString) {
+      return containsValue(valueString);
     }
 
     throw new ClassCastException();
@@ -159,10 +172,10 @@ public abstract class AbstractMneme implements Mneme {
   @Override
   public String get(final Object key) {
 
-    Themis.validate("key", key).againstNullObjects();
+    validate("key", key).againstNullObjects();
 
-    if (key instanceof String) {
-      return get((String) key);
+    if (key instanceof String keyString) {
+      return get(keyString);
     }
 
     throw new ClassCastException();
@@ -201,10 +214,10 @@ public abstract class AbstractMneme implements Mneme {
   @Override
   public String remove(final Object key) {
 
-    Themis.validate("key", key).againstNullObjects();
+    validate("key", key).againstNullObjects();
 
-    if (key instanceof String) {
-      return remove((String) key);
+    if (key instanceof String keyString) {
+      return remove(keyString);
     }
 
     throw new ClassCastException();
@@ -237,7 +250,7 @@ public abstract class AbstractMneme implements Mneme {
   @Override
   public void putAll(final Map<? extends String, ? extends String> map) {
 
-    Themis.validate("map", map).againstNullObjects();
+    validate("map", map).againstNullObjects();
 
     map.forEach(this::put);
   }
@@ -280,7 +293,7 @@ public abstract class AbstractMneme implements Mneme {
     return keySet()
         .stream()
         .map(this::get)
-        .collect(Collectors.toSet());
+        .collect(toSet());
   }
 
   /**
@@ -299,7 +312,7 @@ public abstract class AbstractMneme implements Mneme {
     return keySet()
         .stream()
         .map(MnemeEntry::new)
-        .collect(Collectors.toSet());
+        .collect(toSet());
   }
 
   private class MnemeEntry implements Entry<String, String> {
@@ -310,7 +323,7 @@ public abstract class AbstractMneme implements Mneme {
 
       super();
 
-      Themis.validate("key", key).againstBlankStrings();
+      validate("key", key).againstBlankStrings();
 
       this.key = key;
     }

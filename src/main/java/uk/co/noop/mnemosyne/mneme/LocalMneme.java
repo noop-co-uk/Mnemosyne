@@ -6,10 +6,21 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import static uk.co.noop.themis.Themis.validate;
+
+/**
+ * <p>A {@link Mneme} for storing and retrieving key/value <code>String</code>
+ * pairs locally.</p>
+ *
+ * @see Mneme
+ */
 public class LocalMneme extends AbstractMneme {
 
   private final Map<String, String> map = new HashMap<>();
 
+  /**
+   * <p>Creates a new instance of <code>LocalMneme</code>.</p>
+   */
   public LocalMneme() {
     super();
   }
@@ -34,7 +45,7 @@ public class LocalMneme extends AbstractMneme {
   @Override
   public boolean containsKey(final String key) {
 
-    Themis.validate("key", key).againstBlankStrings();
+    validate("key", key).againstBlankStrings();
 
     return map.containsKey(key);
   }
@@ -59,7 +70,7 @@ public class LocalMneme extends AbstractMneme {
   @Override
   public boolean containsValue(final String value) {
 
-    Themis.validate("value", value).againstBlankStrings();
+    validate("value", value).againstBlankStrings();
 
     return map.containsValue(value);
   }
@@ -86,7 +97,7 @@ public class LocalMneme extends AbstractMneme {
   @Override
   public String get(final String key) {
 
-    Themis.validate("key", key).againstBlankStrings();
+    validate("key", key).againstBlankStrings();
 
     return map.get(key);
   }
@@ -115,8 +126,8 @@ public class LocalMneme extends AbstractMneme {
   @Override
   public String put(final String key, final String value) {
 
-    Themis.validate("key", key).againstBlankStrings();
-    Themis.validate("value", value).againstBlankStrings();
+    validate("key", key).againstBlankStrings();
+    validate("value", value).againstBlankStrings();
 
     return map.put(key, value);
   }
@@ -141,7 +152,7 @@ public class LocalMneme extends AbstractMneme {
   @Override
   public String remove(final String key) {
 
-    Themis.validate("key", key).againstBlankStrings();
+    validate("key", key).againstBlankStrings();
 
     return map.remove(key);
   }

@@ -1,7 +1,6 @@
 package uk.co.noop.mnemosyne;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import uk.co.noop.mnemosyne.mneme.Mneme;
@@ -11,6 +10,11 @@ import uk.co.noop.themis.exception.ThemisNullTargetException;
 
 import java.lang.reflect.Field;
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MnemosyneTest {
 
@@ -36,8 +40,8 @@ public class MnemosyneTest {
       
       final Object value = field.get(null);
       
-      if (value instanceof Map) {
-        ((Map<?, ?>) value).clear();
+      if (value instanceof Map<?, ?> map) {
+        map.clear();
       }
       
     } catch (final Exception e) {
@@ -50,23 +54,23 @@ public class MnemosyneTest {
 
     Mneme mneme = Mnemosyne.getMneme(TEST_NAME);
 
-    Assertions.assertNotNull(mneme);
+    assertNotNull(mneme);
 
     mneme.put(TEST_KEY, TEST_VALUE);
-    Assertions.assertEquals(TEST_VALUE, mneme.get(TEST_KEY));
+    assertEquals(TEST_VALUE, mneme.get(TEST_KEY));
 
     mneme = Mnemosyne.getMneme(TEST_NAME);
-    Assertions.assertEquals(TEST_VALUE, mneme.get(TEST_KEY));
+    assertEquals(TEST_VALUE, mneme.get(TEST_KEY));
 
     new MnemosyneTest().teardown();
     mneme = Mnemosyne.getMneme(TEST_NAME);
-    Assertions.assertFalse(mneme.containsKey(TEST_KEY));
+    assertFalse(mneme.containsKey(TEST_KEY));
   }
 
   @Test
   public void getMneme_local_nullName_shouldThrowThemisNullTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisNullTargetException.class,
         () -> Mnemosyne.getMneme(null));
   }
@@ -74,7 +78,7 @@ public class MnemosyneTest {
   @Test
   public void getMneme_local_emptyName_shouldThrowThemisEmptyTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisEmptyTargetException.class,
         () -> Mnemosyne.getMneme(""));
   }
@@ -82,14 +86,14 @@ public class MnemosyneTest {
   @Test
   public void getMneme_local_blankName_shouldThrowThemisBlankTargetString() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisBlankTargetStringException.class,
         () -> Mnemosyne.getMneme(" "));
   }
 
   @Test
   public void getMneme_local_shouldNotReturnNull() {
-    Assertions.assertNotNull(Mnemosyne.getMneme(TEST_NAME));
+    assertNotNull(Mnemosyne.getMneme(TEST_NAME));
   }
 
   @Test
@@ -99,13 +103,13 @@ public class MnemosyneTest {
     mneme.put(TEST_KEY, TEST_VALUE);
 
     mneme = Mnemosyne.getMneme(TEST_NAME);
-    Assertions.assertEquals(TEST_VALUE, mneme.get(TEST_KEY));
+    assertEquals(TEST_VALUE, mneme.get(TEST_KEY));
   }
 
   @Test
   public void getMneme_s3_nullAwsAccessKey_shouldThrowThemisNullTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisNullTargetException.class,
         () -> Mnemosyne.getMneme(
             null,
@@ -117,7 +121,7 @@ public class MnemosyneTest {
   @Test
   public void getMneme_s3_emptyAwsAccessKey_shouldThrowThemisEmptyTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisEmptyTargetException.class,
         () -> Mnemosyne.getMneme(
             "",
@@ -129,7 +133,7 @@ public class MnemosyneTest {
   @Test
   public void getMneme_s3_blankAwsAccessKey_shouldThrowThemisBlankTargetString() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisBlankTargetStringException.class,
         () -> Mnemosyne.getMneme(
             " ",
@@ -141,7 +145,7 @@ public class MnemosyneTest {
   @Test
   public void getMneme_s3_nullAwsSecretKey_shouldThrowThemisNullTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisNullTargetException.class,
         () -> Mnemosyne.getMneme(
             TEST_AWS_ACCESS_KEY,
@@ -153,7 +157,7 @@ public class MnemosyneTest {
   @Test
   public void getMneme_s3_emptyAwsSecretKey_shouldThrowThemisEmptyTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisEmptyTargetException.class,
         () -> Mnemosyne.getMneme(
             TEST_AWS_ACCESS_KEY,
@@ -165,7 +169,7 @@ public class MnemosyneTest {
   @Test
   public void getMneme_s3_blankAwsSecretKey_shouldThrowThemisBlankTargetString() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisBlankTargetStringException.class,
         () -> Mnemosyne.getMneme(
             TEST_AWS_ACCESS_KEY,
@@ -177,7 +181,7 @@ public class MnemosyneTest {
   @Test
   public void getMneme_s3_nullAwsRegion_shouldThrowThemisNullTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisNullTargetException.class,
         () -> Mnemosyne.getMneme(
             TEST_AWS_ACCESS_KEY,
@@ -189,7 +193,7 @@ public class MnemosyneTest {
   @Test
   public void getMneme_s3_emptyAwsRegion_shouldThrowThemisEmptyTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisEmptyTargetException.class,
         () -> Mnemosyne.getMneme(
             TEST_AWS_ACCESS_KEY,
@@ -201,7 +205,7 @@ public class MnemosyneTest {
   @Test
   public void getMneme_s3_blankAwsRegion_shouldThrowThemisBlankTargetString() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisBlankTargetStringException.class,
         () -> Mnemosyne.getMneme(
             TEST_AWS_ACCESS_KEY,
@@ -213,7 +217,7 @@ public class MnemosyneTest {
   @Test
   public void getMneme_s3_nullS3BucketName_shouldThrowThemisNullTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisNullTargetException.class,
         () -> Mnemosyne.getMneme(
             TEST_AWS_ACCESS_KEY,
@@ -225,7 +229,7 @@ public class MnemosyneTest {
   @Test
   public void getMneme_s3_emptyS3BucketName_shouldThrowThemisEmptyTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisEmptyTargetException.class,
         () -> Mnemosyne.getMneme(
             TEST_AWS_ACCESS_KEY,
@@ -237,7 +241,7 @@ public class MnemosyneTest {
   @Test
   public void getMneme_s3_blankS3BucketName_shouldThrowThemisBlankTargetString() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisBlankTargetStringException.class,
         () -> Mnemosyne.getMneme(
             TEST_AWS_ACCESS_KEY,

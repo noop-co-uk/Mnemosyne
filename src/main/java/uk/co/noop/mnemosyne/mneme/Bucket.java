@@ -1,4 +1,8 @@
 package uk.co.noop.mnemosyne.mneme;
 
-public interface Bucket {
-}
+/**
+ * <p>Overloads {@link Mneme}.</p>
+ *
+ * @see Mneme
+ */
+public interface Bucket { }

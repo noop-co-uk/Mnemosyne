@@ -4,7 +4,6 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,8 +18,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.lenient;
@@ -84,7 +88,7 @@ public class S3MnemeTest {
               lenient().when(objectSummary.getKey()).thenReturn(key);
               return objectSummary;
         })
-        .collect(Collectors.toList());
+        .collect(toList());
 
     lenient().when(objectListing.getObjectSummaries())
         .thenReturn(objectSummaries);
@@ -98,7 +102,7 @@ public class S3MnemeTest {
   @Test
   public void constructor_nullS3_shouldThrowThemisNullTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisNullTargetException.class,
         () -> new S3Mneme(null, TEST_BUCKET_NAME));
   }
@@ -106,7 +110,7 @@ public class S3MnemeTest {
   @Test
   public void constructor_nullBucketName_shouldThrowThemisNullTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisNullTargetException.class,
         () -> new S3Mneme(s3, null));
   }
@@ -114,7 +118,7 @@ public class S3MnemeTest {
   @Test
   public void constructor_emptyBucketName_shouldThrowThemisEmptyTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisEmptyTargetException.class,
         () -> new S3Mneme(s3, ""));
   }
@@ -122,7 +126,7 @@ public class S3MnemeTest {
   @Test
   public void constructor_blankBucketName_shouldThrowThemisBlankTargetString() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisBlankTargetStringException.class,
         () -> new S3Mneme(s3, " "));
   }
@@ -132,7 +136,7 @@ public class S3MnemeTest {
 
     when(s3.doesBucketExistV2(eq(TEST_BUCKET_NAME))).thenReturn(false);
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisInvalidTargetException.class,
         () -> new S3Mneme(s3, TEST_BUCKET_NAME));
 
@@ -150,7 +154,7 @@ public class S3MnemeTest {
   @Test
   public void size_empty_shouldReturnZero() {
 
-    Assertions.assertEquals(0, new S3Mneme(s3, TEST_BUCKET_NAME).size());
+    assertEquals(0, new S3Mneme(s3, TEST_BUCKET_NAME).size());
 
     verify(s3).doesBucketExistV2(eq(TEST_BUCKET_NAME));
     verify(s3).listObjects(eq(TEST_BUCKET_NAME));
@@ -165,7 +169,7 @@ public class S3MnemeTest {
 
     mock_objectSummaries_happyPath();
 
-    Assertions.assertEquals(2, new S3Mneme(s3, TEST_BUCKET_NAME).size());
+    assertEquals(2, new S3Mneme(s3, TEST_BUCKET_NAME).size());
 
     verify(s3).doesBucketExistV2(eq(TEST_BUCKET_NAME));
     verify(s3).listObjects(eq(TEST_BUCKET_NAME));
@@ -175,7 +179,7 @@ public class S3MnemeTest {
   @Test
   public void isEmpty_empty_shouldReturnTrue() {
 
-    Assertions.assertTrue(new S3Mneme(s3, TEST_BUCKET_NAME).isEmpty());
+    assertTrue(new S3Mneme(s3, TEST_BUCKET_NAME).isEmpty());
 
     verify(s3).doesBucketExistV2(eq(TEST_BUCKET_NAME));
     verify(s3).listObjects(eq(TEST_BUCKET_NAME));
@@ -190,7 +194,7 @@ public class S3MnemeTest {
 
     mock_objectSummaries_happyPath();
 
-    Assertions.assertFalse(new S3Mneme(s3, TEST_BUCKET_NAME).isEmpty());
+    assertFalse(new S3Mneme(s3, TEST_BUCKET_NAME).isEmpty());
 
     verify(s3).doesBucketExistV2(eq(TEST_BUCKET_NAME));
     verify(s3).listObjects(eq(TEST_BUCKET_NAME));
@@ -200,7 +204,7 @@ public class S3MnemeTest {
   @Test
   public void containsKey_string_nullKey_shouldThrowThemisNullTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisNullTargetException.class,
         () -> new S3Mneme(s3, TEST_BUCKET_NAME).containsKey(null));
 
@@ -210,7 +214,7 @@ public class S3MnemeTest {
   @Test
   public void containsKey_string_emptyKey_shouldThrowThemisEmptyTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisEmptyTargetException.class,
         () -> new S3Mneme(s3, TEST_BUCKET_NAME).containsKey(""));
 
@@ -220,7 +224,7 @@ public class S3MnemeTest {
   @Test
   public void containsKey_string_blankKey_shouldThrowThemisBlankTargetString() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisBlankTargetStringException.class,
         () -> new S3Mneme(s3, TEST_BUCKET_NAME).containsKey(" "));
 
@@ -230,7 +234,7 @@ public class S3MnemeTest {
   @Test
   public void containsKey_string_doesNotContain_shouldReturnFalse() {
 
-    Assertions.assertFalse(
+    assertFalse(
         new S3Mneme(s3, TEST_BUCKET_NAME).containsKey("Test Key 1"));
 
     verify(s3).doesBucketExistV2(eq(TEST_BUCKET_NAME));
@@ -245,7 +249,7 @@ public class S3MnemeTest {
 
     mock_objectSummaries_happyPath();
 
-    Assertions.assertTrue(
+    assertTrue(
         new S3Mneme(s3, TEST_BUCKET_NAME).containsKey("Test Key 1"));
 
     verify(s3).doesBucketExistV2(eq(TEST_BUCKET_NAME));
@@ -257,7 +261,7 @@ public class S3MnemeTest {
 
     final Object key = null;
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisNullTargetException.class,
         () -> new S3Mneme(s3, TEST_BUCKET_NAME).containsKey(key));
 
@@ -269,7 +273,7 @@ public class S3MnemeTest {
 
     final Object key = new Object();
 
-    Assertions.assertThrows(
+    assertThrows(
         ClassCastException.class,
         () -> new S3Mneme(s3, TEST_BUCKET_NAME).containsKey(key));
 
@@ -286,7 +290,7 @@ public class S3MnemeTest {
 
     final Object key = "Test Key 1";
 
-    Assertions.assertTrue(new S3Mneme(s3, TEST_BUCKET_NAME).containsKey(key));
+    assertTrue(new S3Mneme(s3, TEST_BUCKET_NAME).containsKey(key));
 
     verify(s3).doesBucketExistV2(eq(TEST_BUCKET_NAME));
     verify(s3).doesObjectExist(eq(TEST_BUCKET_NAME), eq("Test Key 1"));
@@ -295,7 +299,7 @@ public class S3MnemeTest {
   @Test
   public void containsValue_string_nullValue_shouldThrowThemisNullTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisNullTargetException.class,
         () -> new S3Mneme(s3, TEST_BUCKET_NAME).containsValue(null));
 
@@ -305,7 +309,7 @@ public class S3MnemeTest {
   @Test
   public void containsValue_string_emptyValue_shouldThrowThemisEmptyTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisEmptyTargetException.class,
         () -> new S3Mneme(s3, TEST_BUCKET_NAME).containsValue(""));
 
@@ -315,7 +319,7 @@ public class S3MnemeTest {
   @Test
   public void containsValue_string_blankValue_shouldThrowThemisBlankTargetString() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisBlankTargetStringException.class,
         () -> new S3Mneme(s3, TEST_BUCKET_NAME).containsValue(" "));
 
@@ -325,7 +329,7 @@ public class S3MnemeTest {
   @Test
   public void containsValue_string_doesNotContain_shouldReturnFalse() {
 
-    Assertions.assertFalse(
+    assertFalse(
         new S3Mneme(s3, TEST_BUCKET_NAME).containsValue("Test Value 1"));
 
     verify(s3).doesBucketExistV2(eq(TEST_BUCKET_NAME));
@@ -341,7 +345,7 @@ public class S3MnemeTest {
 
     mock_objectSummaries_happyPath();
 
-    Assertions.assertTrue(
+    assertTrue(
         new S3Mneme(s3, TEST_BUCKET_NAME).containsValue("Test Value 1"));
 
     verify(s3).doesBucketExistV2(eq(TEST_BUCKET_NAME));
@@ -357,7 +361,7 @@ public class S3MnemeTest {
 
     final Object value = null;
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisNullTargetException.class,
         () -> new S3Mneme(s3, TEST_BUCKET_NAME).containsValue(value));
 
@@ -369,7 +373,7 @@ public class S3MnemeTest {
 
     final Object value = new Object();
 
-    Assertions.assertThrows(
+    assertThrows(
         ClassCastException.class,
         () -> new S3Mneme(s3, TEST_BUCKET_NAME).containsValue(value));
 
@@ -386,7 +390,7 @@ public class S3MnemeTest {
 
     final Object value = "Test Value 1";
 
-    Assertions.assertTrue(
+    assertTrue(
         new S3Mneme(s3, TEST_BUCKET_NAME).containsValue(value));
 
     verify(s3).doesBucketExistV2(eq(TEST_BUCKET_NAME));
@@ -400,7 +404,7 @@ public class S3MnemeTest {
   @Test
   public void get_string_nullKey_shouldThrowThemisNullTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisNullTargetException.class,
         () -> new S3Mneme(s3, TEST_BUCKET_NAME).get(null));
 
@@ -410,7 +414,7 @@ public class S3MnemeTest {
   @Test
   public void get_string_emptyKey_shouldThrowThemisEmptyTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisEmptyTargetException.class,
         () -> new S3Mneme(s3, TEST_BUCKET_NAME).get(""));
 
@@ -420,7 +424,7 @@ public class S3MnemeTest {
   @Test
   public void get_string_blankKey_shouldThrowThemisBlankTargetString() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisBlankTargetStringException.class,
         () -> new S3Mneme(s3, TEST_BUCKET_NAME).get(" "));
 
@@ -435,7 +439,7 @@ public class S3MnemeTest {
 
     mock_objectSummaries_happyPath();
 
-    Assertions.assertEquals(
+    assertEquals(
         "Test Value 1",
         new S3Mneme(s3, TEST_BUCKET_NAME).get("Test Key 1"));
 
@@ -448,7 +452,7 @@ public class S3MnemeTest {
 
     final Object key = null;
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisNullTargetException.class,
         () -> new S3Mneme(s3, TEST_BUCKET_NAME).get(key));
 
@@ -460,7 +464,7 @@ public class S3MnemeTest {
 
     final Object key = new Object();
 
-    Assertions.assertThrows(
+    assertThrows(
         ClassCastException.class,
         () -> new S3Mneme(s3, TEST_BUCKET_NAME).get(key));
 
@@ -477,7 +481,7 @@ public class S3MnemeTest {
 
     final Object key = "Test Key 1";
 
-    Assertions.assertEquals(
+    assertEquals(
         "Test Value 1",
         new S3Mneme(s3, TEST_BUCKET_NAME).get(key));
 
@@ -488,7 +492,7 @@ public class S3MnemeTest {
   @Test
   public void put_nullKey_shouldThrowThemisNullTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisNullTargetException.class,
         () -> new S3Mneme(s3, TEST_BUCKET_NAME).put(null, "Test Value 1"));
 
@@ -498,7 +502,7 @@ public class S3MnemeTest {
   @Test
   public void put_emptyKey_shouldThrowThemisNullTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisEmptyTargetException.class,
         () -> new S3Mneme(s3, TEST_BUCKET_NAME).put("", "Test Value 1"));
 
@@ -508,7 +512,7 @@ public class S3MnemeTest {
   @Test
   public void put_blankKey_shouldThrowThemisBlankTargetString() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisBlankTargetStringException.class,
         () -> new S3Mneme(s3, TEST_BUCKET_NAME).put(" ", "Test Value 1"));
 
@@ -518,7 +522,7 @@ public class S3MnemeTest {
   @Test
   public void put_nullValue_shouldThrowThemisNullTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisNullTargetException.class,
         () -> new S3Mneme(s3, TEST_BUCKET_NAME).put("Test Key 1", null));
 
@@ -528,7 +532,7 @@ public class S3MnemeTest {
   @Test
   public void put_emptyValue_shouldThrowThemisEmptyTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisEmptyTargetException.class,
         () -> new S3Mneme(s3, TEST_BUCKET_NAME).put("Test Key 1", ""));
 
@@ -538,7 +542,7 @@ public class S3MnemeTest {
   @Test
   public void put_blankValue_shouldThrowThemisBlankTargetString() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisBlankTargetStringException.class,
         () -> new S3Mneme(s3, TEST_BUCKET_NAME).put("Test Key 1", " "));
 
@@ -548,7 +552,7 @@ public class S3MnemeTest {
   @Test
   public void put_noPreviousValue_shouldReturnNull() {
 
-    Assertions.assertNull(
+    assertNull(
         new S3Mneme(s3, TEST_BUCKET_NAME).put("Test Key 1", "Test Value 1"));
 
     verify(s3).doesBucketExistV2(eq(TEST_BUCKET_NAME));
@@ -566,7 +570,7 @@ public class S3MnemeTest {
 
     mock_objectSummaries_happyPath();
 
-    Assertions.assertEquals(
+    assertEquals(
         "Test Value 1",
         new S3Mneme(s3, TEST_BUCKET_NAME).put("Test Key 1", "Test Value 1B"));
 
@@ -581,7 +585,7 @@ public class S3MnemeTest {
   @Test
   public void remove_string_nullKey_shouldThrowThemisNullTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisNullTargetException.class,
         () -> new S3Mneme(s3, TEST_BUCKET_NAME).remove(null));
 
@@ -591,7 +595,7 @@ public class S3MnemeTest {
   @Test
   public void remove_string_emptyKey_shouldThrowThemisEmptyTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisEmptyTargetException.class,
         () -> new S3Mneme(s3, TEST_BUCKET_NAME).remove(""));
 
@@ -601,7 +605,7 @@ public class S3MnemeTest {
   @Test
   public void remove_string_blankKey_shouldThrowThemisBlankTargetString() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisBlankTargetStringException.class,
         () -> new S3Mneme(s3, TEST_BUCKET_NAME).remove(" "));
 
@@ -611,8 +615,7 @@ public class S3MnemeTest {
   @Test
   public void remove_string_noPreviousValue_shouldReturnNull() {
 
-    Assertions.assertNull(
-        new S3Mneme(s3, TEST_BUCKET_NAME).remove("Test Key 1"));
+    assertNull(new S3Mneme(s3, TEST_BUCKET_NAME).remove("Test Key 1"));
 
     verify(s3).doesBucketExistV2(eq(TEST_BUCKET_NAME));
     verify(s3).doesObjectExist(eq(TEST_BUCKET_NAME), eq("Test Key 1"));
@@ -626,7 +629,7 @@ public class S3MnemeTest {
 
     mock_objectSummaries_happyPath();
 
-    Assertions.assertEquals(
+    assertEquals(
         "Test Value 1",
         new S3Mneme(s3, TEST_BUCKET_NAME).remove("Test Key 1"));
 
@@ -641,7 +644,7 @@ public class S3MnemeTest {
 
     final Object key = null;
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisNullTargetException.class,
         () -> new S3Mneme(s3, TEST_BUCKET_NAME).remove(key));
 
@@ -653,7 +656,7 @@ public class S3MnemeTest {
 
     final Object key = new Object();
 
-    Assertions.assertThrows(
+    assertThrows(
         ClassCastException.class,
         () -> new S3Mneme(s3, TEST_BUCKET_NAME).remove(key));
 
@@ -670,9 +673,7 @@ public class S3MnemeTest {
 
     final Object key = "Test Key 1";
 
-    Assertions.assertEquals(
-        "Test Value 1",
-        new S3Mneme(s3, TEST_BUCKET_NAME).remove(key));
+    assertEquals("Test Value 1", new S3Mneme(s3, TEST_BUCKET_NAME).remove(key));
 
     verify(s3).doesBucketExistV2(eq(TEST_BUCKET_NAME));
     verify(s3).doesObjectExist(eq(TEST_BUCKET_NAME), eq("Test Key 1"));
@@ -683,7 +684,7 @@ public class S3MnemeTest {
   @Test
   public void putAll_nullMap_shouldThrowThemisNullTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisNullTargetException.class,
         () -> new S3Mneme(s3, TEST_BUCKET_NAME).putAll(null));
 
@@ -700,8 +701,8 @@ public class S3MnemeTest {
     final Mneme mneme = new S3Mneme(s3, TEST_BUCKET_NAME);
     mneme.putAll(map);
 
-    Assertions.assertEquals("Test Value 1", mneme.get("Test Key 1"));
-    Assertions.assertEquals("Test Value 2", mneme.get("Test Key 2"));
+    assertEquals("Test Value 1", mneme.get("Test Key 1"));
+    assertEquals("Test Value 2", mneme.get("Test Key 2"));
 
     verify(s3).doesBucketExistV2(eq(TEST_BUCKET_NAME));
 
@@ -727,7 +728,7 @@ public class S3MnemeTest {
 
     new S3Mneme(s3, TEST_BUCKET_NAME).clear();
 
-    Assertions.assertTrue(map.isEmpty());
+    assertTrue(map.isEmpty());
 
     verify(s3).doesBucketExistV2(eq(TEST_BUCKET_NAME));
     verify(s3).listObjects(eq(TEST_BUCKET_NAME));
@@ -750,7 +751,7 @@ public class S3MnemeTest {
 
     mock_objectSummaries_happyPath();
 
-    Assertions.assertTrue(
+    assertTrue(
         new S3Mneme(s3, TEST_BUCKET_NAME).keySet().containsAll(map.keySet()));
 
     verify(s3).doesBucketExistV2(eq(TEST_BUCKET_NAME));
@@ -766,7 +767,7 @@ public class S3MnemeTest {
 
     mock_objectSummaries_happyPath();
 
-    Assertions.assertTrue(
+    assertTrue(
         new S3Mneme(s3, TEST_BUCKET_NAME).values().containsAll(map.values()));
 
     verify(s3).doesBucketExistV2(eq(TEST_BUCKET_NAME));
@@ -785,7 +786,7 @@ public class S3MnemeTest {
 
     mock_objectSummaries_happyPath();
 
-    Assertions.assertEquals(
+    assertEquals(
         map.size(),
         new S3Mneme(s3, TEST_BUCKET_NAME).entrySet().size());
 
@@ -801,7 +802,7 @@ public class S3MnemeTest {
     when(objectListing.getObjectSummaries())
         .thenReturn(Collections.singletonList(mock(S3ObjectSummary.class)));
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisNullTargetException.class,
         () -> new S3Mneme(s3, TEST_BUCKET_NAME).entrySet());
 
@@ -821,7 +822,7 @@ public class S3MnemeTest {
 
     when(objectSummary.getKey()).thenReturn("");
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisEmptyTargetException.class,
         () -> new S3Mneme(s3, TEST_BUCKET_NAME).entrySet());
 
@@ -841,7 +842,7 @@ public class S3MnemeTest {
 
     when(objectSummary.getKey()).thenReturn(" ");
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisBlankTargetStringException.class,
         () -> new S3Mneme(s3, TEST_BUCKET_NAME).entrySet());
 
@@ -858,7 +859,7 @@ public class S3MnemeTest {
 
     mock_objectSummaries_happyPath();
 
-    Assertions.assertEquals(
+    assertEquals(
         "Test Key 1",
         new S3Mneme(s3, TEST_BUCKET_NAME)
             .entrySet()
@@ -879,7 +880,7 @@ public class S3MnemeTest {
 
     mock_objectSummaries_happyPath();
 
-    Assertions.assertEquals(
+    assertEquals(
         "Test Value 1",
         new S3Mneme(s3, TEST_BUCKET_NAME)
             .entrySet()
@@ -900,7 +901,7 @@ public class S3MnemeTest {
 
     mock_objectSummaries_happyPath();
 
-    Assertions.assertEquals(
+    assertEquals(
         "Test Value 1",
         new S3Mneme(s3, TEST_BUCKET_NAME)
             .entrySet()

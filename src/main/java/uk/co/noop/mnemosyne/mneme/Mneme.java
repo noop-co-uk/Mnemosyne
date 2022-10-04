@@ -3,6 +3,13 @@ package uk.co.noop.mnemosyne.mneme;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * <p>{@link uk.co.noop.mnemosyne.Mnemosyne Mnemosyne} delegates the storing and
+ * retrieving of key/value <code>String</code> pairs to <code>Mneme</code>
+ * instances.</p>
+ *
+ * @see uk.co.noop.mnemosyne.Mnemosyne
+ */
 public interface Mneme extends Map<String, String>, Bucket {
 
   /**

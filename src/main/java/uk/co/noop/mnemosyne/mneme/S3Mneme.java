@@ -6,19 +6,35 @@ import uk.co.noop.mnemosyne.eunomia.S3BucketNameEunomia;
 import uk.co.noop.themis.Themis;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toSet;
+import static uk.co.noop.themis.Themis.validate;
+
+/**
+ * <p>A {@link Mneme} for storing and retrieving key/value <code>String</code>
+ * pairs in an <i>S3</i> bucket.</p>
+ *
+ * @see Mneme
+ */
 public class S3Mneme extends AbstractMneme {
 
   private final AmazonS3 s3;
   private final String bucketName;
 
+  /**
+   * <p>Creates a new instance of <code>S3Mneme</code>.</p>
+   *
+   * @param s3 An instance of {@link AmazonS3}.
+   * @param bucketName The <i>S3</i> bucket name.
+   *
+   * @see AmazonS3
+   */
   public S3Mneme(final AmazonS3 s3, final String bucketName) {
 
     super();
 
-    Themis.validate("s3", s3).againstNullObjects();
-    Themis.validate("bucketName", bucketName, S3BucketNameEunomia.class)
+    validate("s3", s3).againstNullObjects();
+    validate("bucketName", bucketName, S3BucketNameEunomia.class)
         .againstNonExistentS3BucketNames(s3);
 
     this.s3 = s3;
@@ -45,7 +61,7 @@ public class S3Mneme extends AbstractMneme {
   @Override
   public boolean containsKey(final String key) {
 
-    Themis.validate("key", key).againstBlankStrings();
+    validate("key", key).againstBlankStrings();
 
     return s3.doesObjectExist(bucketName, key);
   }
@@ -70,7 +86,7 @@ public class S3Mneme extends AbstractMneme {
   @Override
   public boolean containsValue(final String value) {
 
-    Themis.validate("value", value).againstBlankStrings();
+    validate("value", value).againstBlankStrings();
 
     return values().contains(value);
   }
@@ -97,7 +113,7 @@ public class S3Mneme extends AbstractMneme {
   @Override
   public String get(final String key) {
 
-    Themis.validate("key", key).againstBlankStrings();
+    validate("key", key).againstBlankStrings();
 
     return s3.getObjectAsString(bucketName, key);
   }
@@ -126,8 +142,8 @@ public class S3Mneme extends AbstractMneme {
   @Override
   public String put(final String key, final String value) {
 
-    Themis.validate("key", key).againstBlankStrings();
-    Themis.validate("value", value).againstBlankStrings();
+    validate("key", key).againstBlankStrings();
+    validate("value", value).againstBlankStrings();
 
     String previousValue = null;
 
@@ -160,7 +176,7 @@ public class S3Mneme extends AbstractMneme {
   @Override
   public String remove(final String key) {
 
-    Themis.validate("key", key).againstBlankStrings();
+    validate("key", key).againstBlankStrings();
 
     String previousValue = null;
 
@@ -186,7 +202,7 @@ public class S3Mneme extends AbstractMneme {
         .getObjectSummaries()
         .stream()
         .map(S3ObjectSummary::getKey)
-        .collect(Collectors.toSet());
+        .collect(toSet());
   }
 
 }

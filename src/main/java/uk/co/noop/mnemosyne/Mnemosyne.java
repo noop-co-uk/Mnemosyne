@@ -15,6 +15,12 @@ import uk.co.noop.themis.Themis;
 import java.util.HashMap;
 import java.util.Map;
 
+import static uk.co.noop.themis.Themis.validate;
+
+/**
+ * <p>Goddess of memory and remembrance. A library for storing and retrieving
+ * key/value <code>String</code> pairs.</p>
+ */
 public class Mnemosyne {
 
   private static final Map<String, Mneme> LOCAL_MNEMES = new HashMap<>();
@@ -69,7 +75,7 @@ public class Mnemosyne {
    */
   public static Mneme getMneme(final String name) {
 
-    Themis.validate("name", name).againstBlankStrings();
+    validate("name", name).againstBlankStrings();
 
     return LOCAL_MNEMES.computeIfAbsent(name, __ -> new LocalMneme());
   }
@@ -129,7 +135,8 @@ public class Mnemosyne {
    * &nbsp; &nbsp; AWS_REGION,<br>
    * &nbsp; &nbsp; "data-cache");<br>
    * mneme.put("dir/file123", "Lorem ipsum...");<br>
-   * mneme.get("dir/file123"); // will return "Lorem Ipsum..."</p>
+   * mneme.get("dir/file123"); // will return "Lorem Ipsum..."
+   * </code></p>
    *
    * <p>(See: {@link Mneme#put(String, String)} and {@link Mneme#get(String)}
    * for more information.);</p>
@@ -229,7 +236,7 @@ public class Mnemosyne {
       final String secretKey,
       final String region) {
 
-    Themis.validate("region", region).againstBlankStrings();
+    validate("region", region).againstBlankStrings();
 
     return AmazonS3ClientBuilder.standard()
         .withCredentials(getAwsCredentialsProvider(accessKey, secretKey))
@@ -249,10 +256,14 @@ public class Mnemosyne {
       final String accessKey,
       final String secretKey) {
 
-    Themis.validate("accessKey", accessKey).againstBlankStrings();
-    Themis.validate("secretKey", secretKey).againstBlankStrings();
+    validate("accessKey", accessKey).againstBlankStrings();
+    validate("secretKey", secretKey).againstBlankStrings();
 
     return new BasicAWSCredentials(accessKey, secretKey);
+  }
+
+  private Mnemosyne() {
+    super();
   }
 
 }

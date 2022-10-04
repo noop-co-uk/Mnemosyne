@@ -1,6 +1,5 @@
 package uk.co.noop.mnemosyne.mneme;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import uk.co.noop.themis.exception.ThemisBlankTargetStringException;
 import uk.co.noop.themis.exception.ThemisEmptyTargetException;
@@ -9,11 +8,17 @@ import uk.co.noop.themis.exception.ThemisNullTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class LocalMnemeTest {
 
   @Test
   public void size_empty_shouldReturnZero() {
-    Assertions.assertEquals(0, new LocalMneme().size());
+    assertEquals(0, new LocalMneme().size());
   }
 
   @Test
@@ -24,12 +29,12 @@ public class LocalMnemeTest {
     mneme.put("Test Key 1", "Test Value 1");
     mneme.put("Test Key 2", "Test Value 2");
 
-    Assertions.assertEquals(2, mneme.size());
+    assertEquals(2, mneme.size());
   }
 
   @Test
   public void isEmpty_empty_shouldReturnTrue() {
-    Assertions.assertTrue(new LocalMneme().isEmpty());
+    assertTrue(new LocalMneme().isEmpty());
   }
 
   @Test
@@ -40,13 +45,13 @@ public class LocalMnemeTest {
     mneme.put("Test Key 1", "Test Value 1");
     mneme.put("Test Key 2", "Test Value 2");
 
-    Assertions.assertFalse(mneme.isEmpty());
+    assertFalse(mneme.isEmpty());
   }
 
   @Test
   public void containsKey_string_nullKey_shouldThrowThemisNullTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisNullTargetException.class,
         () -> new LocalMneme().containsKey(null));
   }
@@ -54,7 +59,7 @@ public class LocalMnemeTest {
   @Test
   public void containsKey_string_emptyKey_shouldThrowThemisEmptyTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisEmptyTargetException.class,
         () -> new LocalMneme().containsKey(""));
   }
@@ -62,14 +67,14 @@ public class LocalMnemeTest {
   @Test
   public void containsKey_string_blankKey_shouldThrowThemisBlankTargetString() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisBlankTargetStringException.class,
         () -> new LocalMneme().containsKey(" "));
   }
 
   @Test
   public void containsKey_string_doesNotContain_shouldReturnFalse() {
-    Assertions.assertFalse(new LocalMneme().containsKey("Test Key 1"));
+    assertFalse(new LocalMneme().containsKey("Test Key 1"));
   }
 
   @Test
@@ -80,7 +85,7 @@ public class LocalMnemeTest {
     mneme.put("Test Key 1", "Test Value 1");
     mneme.put("Test Key 2", "Test Value 2");
 
-    Assertions.assertTrue(mneme.containsKey("Test Key 1"));
+    assertTrue(mneme.containsKey("Test Key 1"));
   }
 
   @Test
@@ -88,7 +93,7 @@ public class LocalMnemeTest {
 
     final Object key = null;
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisNullTargetException.class,
         () -> new LocalMneme().containsKey(key));
   }
@@ -98,7 +103,7 @@ public class LocalMnemeTest {
 
     final Object key = new Object();
 
-    Assertions.assertThrows(
+    assertThrows(
         ClassCastException.class,
         () -> new LocalMneme().containsKey(key));
   }
@@ -113,13 +118,13 @@ public class LocalMnemeTest {
 
     final Object key = "Test Key 1";
 
-    Assertions.assertTrue(mneme.containsKey(key));
+    assertTrue(mneme.containsKey(key));
   }
 
   @Test
   public void containsValue_string_nullValue_shouldThrowThemisNullTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisNullTargetException.class,
         () -> new LocalMneme().containsValue(null));
   }
@@ -127,7 +132,7 @@ public class LocalMnemeTest {
   @Test
   public void containsValue_string_emptyValue_shouldThrowThemisEmptyTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisEmptyTargetException.class,
         () -> new LocalMneme().containsValue(""));
   }
@@ -135,14 +140,14 @@ public class LocalMnemeTest {
   @Test
   public void containsValue_string_blankValue_shouldThrowThemisBlankTargetString() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisBlankTargetStringException.class,
         () -> new LocalMneme().containsValue(" "));
   }
 
   @Test
   public void containsValue_string_doesNotContain_shouldReturnFalse() {
-    Assertions.assertFalse(new LocalMneme().containsValue("Test Value 1"));
+    assertFalse(new LocalMneme().containsValue("Test Value 1"));
   }
 
   @Test
@@ -153,7 +158,7 @@ public class LocalMnemeTest {
     mneme.put("Test Key 1", "Test Value 1");
     mneme.put("Test Key 2", "Test Value 2");
 
-    Assertions.assertTrue(mneme.containsValue("Test Value 1"));
+    assertTrue(mneme.containsValue("Test Value 1"));
   }
 
   @Test
@@ -161,7 +166,7 @@ public class LocalMnemeTest {
 
     final Object value = null;
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisNullTargetException.class,
         () -> new LocalMneme().containsValue(value));
   }
@@ -171,7 +176,7 @@ public class LocalMnemeTest {
 
     final Object value = new Object();
 
-    Assertions.assertThrows(
+    assertThrows(
         ClassCastException.class,
         () -> new LocalMneme().containsValue(value));
   }
@@ -186,13 +191,13 @@ public class LocalMnemeTest {
 
     final Object value = "Test Value 1";
 
-    Assertions.assertTrue(mneme.containsValue(value));
+    assertTrue(mneme.containsValue(value));
   }
 
   @Test
   public void get_string_nullKey_shouldThrowThemisNullTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisNullTargetException.class,
         () -> new LocalMneme().get(null));
   }
@@ -200,7 +205,7 @@ public class LocalMnemeTest {
   @Test
   public void get_string_emptyKey_shouldThrowThemisEmptyTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisEmptyTargetException.class,
         () -> new LocalMneme().get(""));
   }
@@ -208,7 +213,7 @@ public class LocalMnemeTest {
   @Test
   public void get_string_blankKey_shouldThrowThemisBlankTargetString() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisBlankTargetStringException.class,
         () -> new LocalMneme().get(" "));
   }
@@ -221,7 +226,7 @@ public class LocalMnemeTest {
     mneme.put("Test Key 1", "Test Value 1");
     mneme.put("Test Key 2", "Test Value 2");
 
-    Assertions.assertEquals("Test Value 1", mneme.get("Test Key 1"));
+    assertEquals("Test Value 1", mneme.get("Test Key 1"));
   }
 
   @Test
@@ -229,7 +234,7 @@ public class LocalMnemeTest {
 
     final Object key = null;
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisNullTargetException.class,
         () -> new LocalMneme().get(key));
   }
@@ -239,7 +244,7 @@ public class LocalMnemeTest {
 
     final Object key = new Object();
 
-    Assertions.assertThrows(
+    assertThrows(
         ClassCastException.class,
         () -> new LocalMneme().get(key));
   }
@@ -254,13 +259,13 @@ public class LocalMnemeTest {
 
     final Object key = "Test Key 1";
 
-    Assertions.assertEquals("Test Value 1", mneme.get(key));
+    assertEquals("Test Value 1", mneme.get(key));
   }
 
   @Test
   public void put_nullKey_shouldThrowThemisNullTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisNullTargetException.class,
         () -> new LocalMneme().put(null, "Test Value 1"));
   }
@@ -268,7 +273,7 @@ public class LocalMnemeTest {
   @Test
   public void put_emptyKey_shouldThrowThemisNullTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisEmptyTargetException.class,
         () -> new LocalMneme().put("", "Test Value 1"));
   }
@@ -276,7 +281,7 @@ public class LocalMnemeTest {
   @Test
   public void put_blankKey_shouldThrowThemisBlankTargetString() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisBlankTargetStringException.class,
         () -> new LocalMneme().put(" ", "Test Value 1"));
   }
@@ -284,7 +289,7 @@ public class LocalMnemeTest {
   @Test
   public void put_nullValue_shouldThrowThemisNullTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisNullTargetException.class,
         () -> new LocalMneme().put("Test Key 1", null));
   }
@@ -292,7 +297,7 @@ public class LocalMnemeTest {
   @Test
   public void put_emptyValue_shouldThrowThemisEmptyTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisEmptyTargetException.class,
         () -> new LocalMneme().put("Test Key 1", ""));
   }
@@ -300,14 +305,14 @@ public class LocalMnemeTest {
   @Test
   public void put_blankValue_shouldThrowThemisBlankTargetString() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisBlankTargetStringException.class,
         () -> new LocalMneme().put("Test Key 1", " "));
   }
 
   @Test
   public void put_noPreviousValue_shouldReturnNull() {
-    Assertions.assertNull(new LocalMneme().put("Test Key 1", "Test Value 1"));
+    assertNull(new LocalMneme().put("Test Key 1", "Test Value 1"));
   }
 
   @Test
@@ -318,7 +323,7 @@ public class LocalMnemeTest {
     mneme.put("Test Key 1", "Test Value 1");
     mneme.put("Test Key 2", "Test Value 2");
 
-    Assertions.assertEquals(
+    assertEquals(
         "Test Value 1",
         mneme.put("Test Key 1", "Test Value 1B"));
   }
@@ -326,7 +331,7 @@ public class LocalMnemeTest {
   @Test
   public void remove_string_nullKey_shouldThrowThemisNullTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisNullTargetException.class,
         () -> new LocalMneme().remove(null));
   }
@@ -334,7 +339,7 @@ public class LocalMnemeTest {
   @Test
   public void remove_string_emptyKey_shouldThrowThemisEmptyTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisEmptyTargetException.class,
         () -> new LocalMneme().remove(""));
   }
@@ -342,14 +347,14 @@ public class LocalMnemeTest {
   @Test
   public void remove_string_blankKey_shouldThrowThemisBlankTargetString() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisBlankTargetStringException.class,
         () -> new LocalMneme().remove(" "));
   }
 
   @Test
   public void remove_string_noPreviousValue_shouldReturnNull() {
-    Assertions.assertNull(new LocalMneme().remove("Test Key 1"));
+    assertNull(new LocalMneme().remove("Test Key 1"));
   }
 
   @Test
@@ -360,7 +365,7 @@ public class LocalMnemeTest {
     mneme.put("Test Key 1", "Test Value 1");
     mneme.put("Test Key 2", "Test Value 2");
 
-    Assertions.assertEquals("Test Value 1", mneme.remove("Test Key 1"));
+    assertEquals("Test Value 1", mneme.remove("Test Key 1"));
   }
 
   @Test
@@ -368,7 +373,7 @@ public class LocalMnemeTest {
 
     final Object key = null;
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisNullTargetException.class,
         () -> new LocalMneme().remove(key));
   }
@@ -378,7 +383,7 @@ public class LocalMnemeTest {
 
     final Object key = new Object();
 
-    Assertions.assertThrows(
+    assertThrows(
         ClassCastException.class,
         () -> new LocalMneme().remove(key));
   }
@@ -393,13 +398,13 @@ public class LocalMnemeTest {
 
     final Object key = "Test Key 1";
 
-    Assertions.assertEquals("Test Value 1", mneme.remove(key));
+    assertEquals("Test Value 1", mneme.remove(key));
   }
 
   @Test
   public void putAll_nullMap_shouldThrowThemisNullTarget() {
 
-    Assertions.assertThrows(
+    assertThrows(
         ThemisNullTargetException.class,
         () -> new LocalMneme().putAll(null));
   }
@@ -414,8 +419,8 @@ public class LocalMnemeTest {
     final Mneme mneme = new LocalMneme();
     mneme.putAll(map);
 
-    Assertions.assertEquals("Test Value 1", mneme.get("Test Key 1"));
-    Assertions.assertEquals("Test Value 2", mneme.get("Test Key 2"));
+    assertEquals("Test Value 1", mneme.get("Test Key 1"));
+    assertEquals("Test Value 2", mneme.get("Test Key 2"));
   }
 
   @Test
@@ -428,7 +433,7 @@ public class LocalMnemeTest {
 
     mneme.clear();
 
-    Assertions.assertTrue(mneme.isEmpty());
+    assertTrue(mneme.isEmpty());
   }
 
   @Test
@@ -441,7 +446,7 @@ public class LocalMnemeTest {
     final Mneme mneme = new LocalMneme();
     mneme.putAll(map);
 
-    Assertions.assertTrue(mneme.keySet().containsAll(map.keySet()));
+    assertTrue(mneme.keySet().containsAll(map.keySet()));
   }
 
   @Test
@@ -454,7 +459,7 @@ public class LocalMnemeTest {
     final Mneme mneme = new LocalMneme();
     mneme.putAll(map);
 
-    Assertions.assertTrue(mneme.values().containsAll(map.values()));
+    assertTrue(mneme.values().containsAll(map.values()));
   }
 
   @Test
@@ -467,7 +472,7 @@ public class LocalMnemeTest {
     final Mneme mneme = new LocalMneme();
     mneme.putAll(map);
 
-    Assertions.assertEquals(map.size(), mneme.entrySet().size());
+    assertEquals(map.size(), mneme.entrySet().size());
   }
 
 }
